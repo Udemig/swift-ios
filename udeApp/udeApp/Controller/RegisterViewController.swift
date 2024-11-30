@@ -44,7 +44,6 @@ class RegisterViewController: UIViewController, UINavigationControllerDelegate {
     
     @IBAction func close(_ sender: Any) {
         self.dismiss(animated: true)
-        
     }
     
     @IBAction func register(_ sender: Any) {
@@ -55,6 +54,11 @@ class RegisterViewController: UIViewController, UINavigationControllerDelegate {
         
         if name.isEmpty || mail.isEmpty || password.isEmpty || passwordRepetition.isEmpty {
             Helper.dialogMessage(message: "Alanlar bos olamaz", vc: self)
+            return
+        }
+        
+        if self.userImageView.image == nil {
+            Helper.dialogMessage(message: "Resim secmediniz", vc: self)
             return
         }
         
@@ -74,6 +78,29 @@ class RegisterViewController: UIViewController, UINavigationControllerDelegate {
             } else {
                 let imageName = UUID().uuidString + ".jpg"
                 let path = "image"
+                let imageRef = storageRef.child(path).child(imageName)
+                imageRef.putData((self.userImageView.image?.jpegData(compressionQuality: 0.5))!) { metaData, error in
+                    if error != nil {
+                        Helper.dialogMessage(message: error!.localizedDescription, vc: self)
+                    } else {
+                        imageRef.downloadURL { url, error in
+                            if error != nil {
+                                Helper.dialogMessage(message: error!.localizedDescription, vc: self)
+                            } else {
+                                print(url?.absoluteString)
+                                let userData = [
+                                    "name": name,
+                                    "mail": mail,
+                                    "photoURL": url?.absoluteString
+                                ]
+                                databaseRef.child(Child.USERS).childByAutoId().setValue(userData) { error, databaseReference in
+                                    let vc = self.storyboard?.instantiateViewController(withIdentifier: "homeViewController") as! HomeViewController
+                                    self.present(vc, animated: true)
+                                }
+                            }
+                        }
+                    }
+                }
                
             }
         }
