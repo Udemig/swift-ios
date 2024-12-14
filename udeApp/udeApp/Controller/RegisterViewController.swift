@@ -91,6 +91,7 @@ class RegisterViewController: UIViewController, UINavigationControllerDelegate {
                                 let userData = [
                                     "name": name,
                                     "mail": mail,
+                                    "uid": auth.currentUser?.uid,
                                     "photoURL": url?.absoluteString
                                 ]
                                 databaseRef.child(Child.USERS).childByAutoId().setValue(userData) { error, databaseReference in

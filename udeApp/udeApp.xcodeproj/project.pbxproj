@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1C4B46B94A4103E6DF322BD1 /* Pods_udeApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 94088090499C46B5BACCECA6 /* Pods_udeApp.framework */; };
+		2A3845F72D0E1070008DA837 /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A3845F62D0E1070008DA837 /* UserInfo.swift */; };
 		2A76CE3D2CFB8A650010A9C0 /* HomeTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A76CE3C2CFB8A650010A9C0 /* HomeTableViewCell.swift */; };
 		2A76CE3F2CFB8D7C0010A9C0 /* UserListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A76CE3E2CFB8D7C0010A9C0 /* UserListItem.swift */; };
 		2A76CE412CFBA14D0010A9C0 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A76CE402CFBA14D0010A9C0 /* ChatViewController.swift */; };
@@ -29,6 +30,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2A3845F62D0E1070008DA837 /* UserInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfo.swift; sourceTree = "<group>"; };
 		2A76CE3C2CFB8A650010A9C0 /* HomeTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeTableViewCell.swift; sourceTree = "<group>"; };
 		2A76CE3E2CFB8D7C0010A9C0 /* UserListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListItem.swift; sourceTree = "<group>"; };
 		2A76CE402CFBA14D0010A9C0 /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
@@ -115,6 +117,7 @@
 			children = (
 				2A76CE3E2CFB8D7C0010A9C0 /* UserListItem.swift */,
 				2A76CE482CFBA9E70010A9C0 /* MessageListItem.swift */,
+				2A3845F62D0E1070008DA837 /* UserInfo.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -290,6 +293,7 @@
 				2AB81C712CF39CC500D79C7D /* RegisterViewController.swift in Sources */,
 				2A76CE412CFBA14D0010A9C0 /* ChatViewController.swift in Sources */,
 				2A76CE472CFBA8520010A9C0 /* ChatTableViewCell.swift in Sources */,
+				2A3845F72D0E1070008DA837 /* UserInfo.swift in Sources */,
 				2A76CE3F2CFB8D7C0010A9C0 /* UserListItem.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

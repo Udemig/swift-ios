@@ -24,10 +24,12 @@ class ChatViewController: UIViewController {
     var list = [MessageListItem]()
     var auth: Auth!
     var chatInboxInfo: NSDictionary!
+    var chatLastInfo: NSDictionary!
     
     var recipientName = ""
     var recipientUid = ""
     var rowKeyChatInbox: String = ""
+    var rowKeyChatLast: String = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,10 +45,12 @@ class ChatViewController: UIViewController {
             .queryOrdered(byChild: "senderUid")
             .queryEqual(toValue: self.auth.currentUser?.uid)
             .observeSingleEvent(of: .value) { dataSnapshot in
+                print (" createChat observeSingleEvent: ")
                 for child in dataSnapshot.children {
                     let snap = child as! DataSnapshot
                     let dict = snap.value as! NSDictionary
-                    if (dict["recepintUid"] as! String) == self.recipientUid {
+                    print (" createChat dict:  \(dict)")
+                    if (dict["recepientUid"] as! String) == self.recipientUid {
                         self.chatInboxInfo = dict
                         
                         self.databaseRef.child(Child.CHAT_INBOX)
@@ -66,10 +70,13 @@ class ChatViewController: UIViewController {
                             .observe(.value) { dataSnapshot in
                                 for child in dataSnapshot.children {
                                     let snap = child as! DataSnapshot
-                                    self.rowKeyChatInbox = snap.key
+                                    self.rowKeyChatLast = snap.key
                                 }
                             }
                     }
+                    
+                    self.createChatInboxAndLastChat()
+                    self.chats()
                    /*
                     son chati olustur
                     chatler
@@ -79,6 +86,73 @@ class ChatViewController: UIViewController {
             }
         
         
+    }
+    
+   
+    
+    func createChatInboxAndLastChat() {
+        if chatInboxInfo == nil {
+            let key = databaseRef.childByAutoId().key
+            
+            //gonderen
+            chatInboxInfo = [
+                "inboxKey": key! ,
+                "senderUid": self.auth.currentUser!.uid,
+                "recipientUid": self.recipientUid,
+                "isRead": "0"]
+            databaseRef.child(Child.CHAT_INBOX).childByAutoId().setValue(chatInboxInfo)
+            
+            //alici
+            chatInboxInfo = [
+                "inboxKey": key! ,
+                "senderUid": self.recipientUid ,
+                "recipientUid": self.auth.currentUser!.uid,
+                "isRead": "0"]
+            databaseRef.child(Child.CHAT_INBOX).childByAutoId().setValue(chatInboxInfo) { error, databaseReference in
+                self.rowKeyChatInbox = databaseReference.key!
+            }
+            
+            //son mesaj
+            chatLastInfo = ["inboxKey": key!, "messageKey": ""]
+            databaseRef.child(Child.CHAT_LAST).childByAutoId().setValue(chatLastInfo) { error, databaseReference in
+                self.rowKeyChatInbox = databaseReference.key!
+            }
+        }
+    }
+    
+    func chats() {
+        databaseRef.child(Child.CHATS)
+            .queryOrdered(byChild: "inboxKey")
+            .queryEqual(toValue: (self.chatInboxInfo!["inboxKey"] as! String))
+            .observeSingleEvent(of: .value) { snapshot in
+                for child in snapshot.children {
+                    if let childSnapshot = child as? DataSnapshot, let message = MessageListItem(snapshot: childSnapshot){
+                        self.list.append(message)
+                    }
+                }
+                self.messageTableView.reloadData()
+                self.tableViewScrollToBottom(animated: true)
+            }
+    }
+    
+    func chatLast(){
+        databaseRef.child(Child.CHAT_LAST)
+            .queryOrdered(byChild: "inboxKey")
+            .queryEqual(toValue: (self.chatInboxInfo["inboxKey"] as! String))
+            .observe(.childChanged) { dataSnapshot in
+                if let dict = dataSnapshot.value as? NSDictionary {
+                    let messageKey = dict["messageKey"] as! String
+                    self.databaseRef.child(Child.CHATS)
+                        .child(messageKey)
+                        .observeSingleEvent(of: .value) { dataSnapshot in
+                            if let messageListItem = MessageListItem(snapshot: dataSnapshot) {
+                                self.list.append(messageListItem)
+                            }
+                            self.messageTableView.reloadData()
+                            self.tableViewScrollToBottom(animated: false)
+                        }
+                }
+            }
     }
     
     func setupTableAndInitDB() {
@@ -135,7 +209,7 @@ class ChatViewController: UIViewController {
         databaseRef.child(Child.CHATS).childByAutoId()
             .setValue(postData) { error, dbRef in
                 self.textMessageTextField.text = ""
-                self.databaseRef.child(Child.CHAT_LAST).child(self.rowKeyChatInbox).child("messageKey").setValue(dbRef.key)
+                self.databaseRef.child(Child.CHAT_LAST).child(self.rowKeyChatLast).child("messageKey").setValue(dbRef.key)
                 self.databaseRef.child(Child.CHAT_INBOX).child(self.rowKeyChatInbox).child("isRead").setValue("1")
             }
     }
@@ -150,4 +224,33 @@ class ChatViewController: UIViewController {
     }
     */
 
+}
+
+
+extension ChatViewController: UITableViewDelegate, UITableViewDataSource, UIScrollViewDelegate {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return list.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "chatTableViewCell") as! ChatTableViewCell
+        let info = self.list[indexPath.row]
+        if self.auth.currentUser!.uid == info.senderUid {
+            cell.messageType(isComing: false)
+        }else {
+            cell.messageType(isComing: true)
+        }
+        cell.label.text = info.message
+        return cell
+    }
+    
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        self.view.endEditing(true)
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.view.endEditing(true)
+    }
+    
+    
 }
