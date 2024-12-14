@@ -50,7 +50,7 @@ class ChatViewController: UIViewController {
                     let snap = child as! DataSnapshot
                     let dict = snap.value as! NSDictionary
                     print (" createChat dict:  \(dict)")
-                    if (dict["recepientUid"] as! String) == self.recipientUid {
+                    if (dict["recipientUid"] as! String) == self.recipientUid {
                         self.chatInboxInfo = dict
                         
                         self.databaseRef.child(Child.CHAT_INBOX)
@@ -75,14 +75,16 @@ class ChatViewController: UIViewController {
                             }
                     }
                     
-                    self.createChatInboxAndLastChat()
-                    self.chats()
-                   /*
-                    son chati olustur
-                    chatler
-                    son chat
-                    */
+                   
                 }
+                self.createChatInboxAndLastChat()  //unuttum
+                /*
+                 son chati olustur
+                 chatler
+                 son chat
+                 */
+                self.chats()
+                self.chatLast()
             }
         
         
@@ -91,17 +93,21 @@ class ChatViewController: UIViewController {
    
     
     func createChatInboxAndLastChat() {
+        print("hata 12")
         if chatInboxInfo == nil {
             let key = databaseRef.childByAutoId().key
-            
+            print("hata 11")
             //gonderen
             chatInboxInfo = [
                 "inboxKey": key! ,
                 "senderUid": self.auth.currentUser!.uid,
                 "recipientUid": self.recipientUid,
                 "isRead": "0"]
-            databaseRef.child(Child.CHAT_INBOX).childByAutoId().setValue(chatInboxInfo)
-            
+            databaseRef.child(Child.CHAT_INBOX).childByAutoId().setValue(chatInboxInfo) { error, databaseReference in
+                if error != nil {
+                    print("hata 1")
+                }
+            }
             //alici
             chatInboxInfo = [
                 "inboxKey": key! ,
@@ -109,12 +115,16 @@ class ChatViewController: UIViewController {
                 "recipientUid": self.auth.currentUser!.uid,
                 "isRead": "0"]
             databaseRef.child(Child.CHAT_INBOX).childByAutoId().setValue(chatInboxInfo) { error, databaseReference in
+                
                 self.rowKeyChatInbox = databaseReference.key!
             }
             
             //son mesaj
             chatLastInfo = ["inboxKey": key!, "messageKey": ""]
             databaseRef.child(Child.CHAT_LAST).childByAutoId().setValue(chatLastInfo) { error, databaseReference in
+                if (error != nil) {
+                    print("hata 2")
+                }
                 self.rowKeyChatInbox = databaseReference.key!
             }
         }
