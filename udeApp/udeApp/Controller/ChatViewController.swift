@@ -206,20 +206,22 @@ class ChatViewController: UIViewController {
         self.dismiss(animated: true)
     }
     
+    
     @IBAction func btnSendMessage(_ sender: Any) {
         
         let inboxKey = chatInboxInfo["inboxKey"] as! String
-        let senderUid = auth.currentUser?.uid
+        let senderUid = auth.currentUser!.uid
         let message = textMessageTextField.text!
         let postData = [
             "inboxKey": inboxKey,
             "senderUid": senderUid,
             "message": message
         ]
+        
         databaseRef.child(Child.CHATS).childByAutoId()
             .setValue(postData) { error, dbRef in
                 self.textMessageTextField.text = ""
-                self.databaseRef.child(Child.CHAT_LAST).child(self.rowKeyChatLast).child("messageKey").setValue(dbRef.key)
+                self.databaseRef.child(Child.CHAT_LAST).child(self.rowKeyChatLast).child("messageKey").setValue(dbRef.key!)
                 self.databaseRef.child(Child.CHAT_INBOX).child(self.rowKeyChatInbox).child("isRead").setValue("1")
             }
     }

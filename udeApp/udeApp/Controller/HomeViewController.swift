@@ -19,7 +19,7 @@ class HomeViewController: UIViewController {
 
         // Do any additional setup after loading the view.
         
-        tableLoad()
+        loadTable()
     }
     
 
@@ -36,7 +36,7 @@ class HomeViewController: UIViewController {
             
     }
     
-    func tableLoad() {
+    func loadTable() {
         
         usersTableView.delegate = self
         usersTableView.dataSource = self
@@ -47,12 +47,15 @@ class HomeViewController: UIViewController {
         databaseRef.child(Child.USERS).observe(.value) { shapshot in
             
             self.list.removeAll()
-            
+            print("Auth.auth().currentUser?.uid \(Auth.auth().currentUser?.uid)")
             for child in shapshot.children {
                 if let childSnapshot = child as? DataSnapshot, let user = UserListItem(snapshot: childSnapshot) {
                     
-                    print(user.uid)
-                    self.list.append(user)
+                    print("user.uid \(user.uid)")
+                    if user.uid != Auth.auth().currentUser?.uid {
+                        self.list.append(user)
+                    }
+                    
                     DispatchQueue.main.async {
                         self.usersTableView.reloadData()
                     }

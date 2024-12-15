@@ -28,16 +28,13 @@ class ProfileViewController: UIViewController {
         let databaseRef = Database.database().reference()
         let auth = Auth.auth()
         
-        print("getUserInfo 1")
         databaseRef.child(Child.USERS)
             .queryOrdered(byChild: "uid")
             .queryEqual(toValue: auth.currentUser!.uid)
-            .observeSingleEvent(of: .value) { dataSnopshot in
-                for child in dataSnopshot.children{
-                    print("getUserInfo 2")
+            .observeSingleEvent(of: .value) { dataSnapshot in
+                for child in dataSnapshot.children{
                     let snap = child as! DataSnapshot
                     let userInfo = UserInfo(snapshot: snap)
-                    print("getUserInfo 3")
                     
                     self.infoLabel.text = userInfo.name
                     Helper.imageLoad(imageView: self.photoImageView, url: userInfo.photoUrl!)
