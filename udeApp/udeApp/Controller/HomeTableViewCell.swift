@@ -24,7 +24,6 @@ class HomeTableViewCell: UITableViewCell {
     }
     
     func configure(userItem: UserListItem){
-        print(userItem.photoUrl ?? "bos")
         Helper.imageLoad(imageView: userImage, url: userItem.photoUrl!)
         userNameLabel.text = userItem.name
         
