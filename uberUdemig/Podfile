@@ -1,0 +1,9 @@
+
+target 'uberUdemig' do
+  use_frameworks!
+
+  # Firebase Pods
+  
+end
+
+
