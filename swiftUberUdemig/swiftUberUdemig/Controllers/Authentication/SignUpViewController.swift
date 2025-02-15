@@ -6,10 +6,14 @@
 //
 
 import UIKit
+import FirebaseAuth
+import GeoFire
 
 class SignUpViewController: UIViewController {
     
     //MARK: -Properties
+    private var location = LocationHandler.shared.locationManager.location
+    
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "UDEMIG UBER"
@@ -94,6 +98,50 @@ class SignUpViewController: UIViewController {
     
     //MARK: -Selector
     @objc func handleSignUp(){
+        guard let email = emailTextField.text else { return }
+        guard let passord = passwordTextField.text else { return }
+        guard let fullname = fullnameTextField.text else { return }
+        
+        let accountTypeIndex = accountTypeSegmentedControl.selectedSegmentIndex
+        
+        Auth.auth().createUser(withEmail: email, password: passord) { authResult, error in
+            if let error = error {
+                print("Failed to create user: \(error.localizedDescription)")
+                return
+            }
+            
+            guard let uid = authResult?.user.uid else { return }
+            
+            let values: [String: Any] = [
+                "email": email,
+                "fullname": fullname,
+                "accountType": accountTypeIndex
+            ] as [String : Any]
+            if accountTypeIndex == 1 {
+                let geofire = GeoFire(firebaseRef: REF_DRIVER_LOCATIONS)
+                guard let location = self.location else { return }
+                geofire.setLocation(location, forKey: uid) { error in
+                    self.uploadUserDataAndShowHomeController(uid: uid, values: values)
+                }
+            }
+            self.uploadUserDataAndShowHomeController(uid: uid, values: values)
+            
+            
+                }
+        
+    }
+    
+    func uploadUserDataAndShowHomeController(uid: String, values: [String: Any]) {
+        print("hata 5")
+        REF_USERS.child(uid).updateChildValues(values) { error, databaseReference in
+            
+            print("hata 6")
+            guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene, let window = windowScene.windows.first, let controller = window.rootViewController as? ContainerViewController else { return }
+            
+            //yonlendirme yapacagiz
+            
+            self.dismiss(animated: true)
+        }
         
     }
     

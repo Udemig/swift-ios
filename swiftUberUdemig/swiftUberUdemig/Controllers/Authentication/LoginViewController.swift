@@ -7,8 +7,7 @@
 
 import UIKit
 import Foundation
-
-
+import FirebaseAuth
 
 class LoginViewController: UIViewController {
     
@@ -79,16 +78,16 @@ class LoginViewController: UIViewController {
         guard let password = passwordTextField.text else { return }
         
        
-        /*
+        
         Auth.auth().signIn(withEmail: email, password: password) { authDataResult, error in
             if let error = error {
                 print("giris yaparken hata oldu")
                 return
             }
-            guard let controller = UIApplication.shared.keyWindow.rootViewController  as? ContainerViewController else { return }
+            guard let controller = UIApplication.shared.keyWindow!.rootViewController  as? ContainerViewController else { return }
             self.dismiss(animated: true)
         }
-         */
+         
         
         
     }
