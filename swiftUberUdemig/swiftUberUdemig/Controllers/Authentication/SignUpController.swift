@@ -9,7 +9,7 @@ import UIKit
 import FirebaseAuth
 import GeoFire
 
-class SignUpViewController: UIViewController {
+class SignUpController: UIViewController {
     
     //MARK: -Properties
     private var location = LocationHandler.shared.locationManager.location
@@ -89,12 +89,14 @@ class SignUpViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+    
         configureUI()
        // view.backgroundColor = .blue
 
         // Do any additional setup after loading the view.
     }
     
+   
     
     //MARK: -Selector
     @objc func handleSignUp(){
@@ -132,13 +134,12 @@ class SignUpViewController: UIViewController {
     }
     
     func uploadUserDataAndShowHomeController(uid: String, values: [String: Any]) {
-        print("hata 5")
         REF_USERS.child(uid).updateChildValues(values) { error, databaseReference in
             
-            print("hata 6")
-            guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene, let window = windowScene.windows.first, let controller = window.rootViewController as? ContainerViewController else { return }
+            guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene, let window = windowScene.windows.first, let controller = window.rootViewController as? ContainerController else { return }
             
             //yonlendirme yapacagiz
+            controller.configure()
             
             self.dismiss(animated: true)
         }

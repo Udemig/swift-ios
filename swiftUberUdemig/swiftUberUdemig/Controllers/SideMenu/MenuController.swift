@@ -1,12 +1,12 @@
 //
-//  MenuViewController.swift
-//  swiftUberUdemig
+//  MenuController.swift
+//  Uber Clone
 //
-//  Created by Mehmet Seyhan on 15.02.2025.
+//  Created by Mehmet Can Seyhan on 2021-10-13.
 //
 
+import Foundation
 import UIKit
-
 
 private let reuseIdentifier = "MenuCell"
 
@@ -19,7 +19,7 @@ enum MenuOptions: Int, CaseIterable, CustomStringConvertible {
         switch self {
         case .yourTrips: return "Your Trips"
         case .settings: return "Settings"
-        case .logout: return "Log out"
+        case .logout: return "Log Out"
         }
     }
 }
@@ -28,34 +28,42 @@ protocol MenuControllerDelegate: AnyObject {
     func didSelect(option: MenuOptions)
 }
 
-class MenuViewController: UITableViewController {
+class MenuController: UITableViewController {
     
+    // MARK: - Properties
     
-    //MARK: - properties
     private let user: User
     weak var delegate: MenuControllerDelegate?
     
     private lazy var menuHeader: MenuHeader = {
-        let frame = CGRect(x: 0, y: 0, width: self.view.frame.width - 80, height: 140)
+        let frame = CGRect(x: 0,
+                           y: 0,
+                           width: self.view.frame.width - 80,
+                           height: 140)
         let view = MenuHeader(user: user, frame: frame)
         return view
     }()
     
-    //MARK: -Lifecycle
+    // MARK: - Lifecycle
+    
     init(user: User) {
         self.user = user
         super.init(nibName: nil, bundle: nil)
     }
     
-    required init?(coder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        view.backgroundColor = .white
+        configureTableView()
     }
+    
+    // MARK: - Selectors
+    
+    // MARK: - Helper Functions
     
     func configureTableView() {
         tableView.backgroundColor = .white
@@ -65,24 +73,11 @@ class MenuViewController: UITableViewController {
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: reuseIdentifier)
         tableView.tableHeaderView = menuHeader
     }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }
 
+// MARK: - UITableViewDelegate/DataSource
 
-//MARK: - UITableViewDelegate/DataSource
-
-extension MenuViewController{
+extension MenuController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return MenuOptions.allCases.count
     }
@@ -90,10 +85,9 @@ extension MenuViewController{
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath)
         
-        guard let option = MenuOptions(rawValue: indexPath.row) else {
-            return UITableViewCell()
-        }
+        guard let option = MenuOptions(rawValue: indexPath.row) else { return UITableViewCell() }
         cell.textLabel?.text = option.description
+        
         return cell
     }
     
@@ -102,4 +96,3 @@ extension MenuViewController{
         delegate?.didSelect(option: option)
     }
 }
-
