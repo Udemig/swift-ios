@@ -9,6 +9,7 @@ import Foundation
 import UIKit
 
 class AuthButton: UIButton {
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -19,7 +20,8 @@ class AuthButton: UIButton {
     }
     
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder) uygulanamadi")
+        fatalError("init(coder:) has not been implemented")
     }
+    
 }
 

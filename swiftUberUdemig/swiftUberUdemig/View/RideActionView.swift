@@ -16,7 +16,7 @@ protocol RideActionViewDelegate: AnyObject {
     func dropOffPassenger()
 }
 
-enum RiderActionViewConfiguration{
+enum RideActionViewConfiguration {
     case requestRide
     case tripAccepted
     case driverArrived
@@ -38,26 +38,27 @@ enum ButtonAction: CustomStringConvertible {
     
     var description: String {
         switch self {
-        case .requestRide: return "Uberi onayla"
-        case .cancel: return "İptal et"
-        case .getDirections: return "Konumu bul"
-        case .pickup: return "Yolcu al"
-        case .dropOff: return "Yolcu birak"
+        case .requestRide: return "CONFIRM UBERX"
+        case .cancel: return "CANCEL RIDE"
+        case .getDirections: return "GET DIRECTIONS"
+        case .pickup: return "PICKUP PASSENGER"
+        case .dropOff: return "DROP OFF PASSENGER"
         }
     }
     
     init() {
         self = .requestRide
     }
-    
 }
 
-class RideActionView: UIView{
+class RideActionView: UIView {
+
+    // MARK: - Properties
     
-    //MARK : Properties
     var destination: MKPlacemark? {
-        didSet{
-            //text atamalari olacak
+        didSet {
+            titleLabel.text = destination?.name
+            addressLabel.text = destination?.address
         }
     }
     
@@ -65,15 +66,13 @@ class RideActionView: UIView{
     weak var delegate: RideActionViewDelegate?
     var user: User?
     
-    var config = RiderActionViewConfiguration() {
-        didSet{
-            configureUI(withConfig: config)
-        }
+    var config = RideActionViewConfiguration() {
+        didSet { configureUI(withConfig: config) }
     }
     
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 18)
+        label.font = UIFont.systemFont(ofSize: 18)
         label.textAlignment = .center
         return label
     }()
@@ -81,7 +80,7 @@ class RideActionView: UIView{
     private let addressLabel: UILabel = {
         let label = UILabel()
         label.textColor = .lightGray
-        label.font = .systemFont(ofSize: 16)
+        label.font = UIFont.systemFont(ofSize: 16)
         label.textAlignment = .center
         return label
     }()
@@ -89,15 +88,17 @@ class RideActionView: UIView{
     private lazy var infoView: UIView = {
         let view = UIView()
         view.backgroundColor = .black
+        
         view.addSubview(infoViewLabel)
         infoViewLabel.centerX(inView: view)
         infoViewLabel.centerY(inView: view)
+        
         return view
     }()
     
     private let infoViewLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 30)
+        label.font = UIFont.systemFont(ofSize: 30)
         label.textColor = .white
         label.text = "X"
         return label
@@ -105,8 +106,8 @@ class RideActionView: UIView{
     
     private let uberInfoLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 18)
-        label.text = "UBERX"
+        label.font = UIFont.systemFont(ofSize: 18)
+        label.text = "UberX"
         label.textAlignment = .center
         return label
     }()
@@ -114,16 +115,18 @@ class RideActionView: UIView{
     private let actionButton: UIButton = {
         let button = UIButton(type: .system)
         button.backgroundColor = .black
-        button.setTitle("Uberi onayla", for: .normal)
+        button.setTitle("CONFIRM UBERX", for: .normal)
         button.setTitleColor(.white, for: .normal)
-        button.titleLabel?.font = .boldSystemFont(ofSize: 20)
+        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 20)
         button.addTarget(self, action: #selector(actionButtonPressed), for: .touchUpInside)
         return button
     }()
     
-    //MARK: -Lifecycle
-    override init(frame: CGRect){
+    // MARK: - Lifecycle
+    
+    override init(frame: CGRect) {
         super.init(frame: frame)
+        
         backgroundColor = .white
         addShadow()
         
@@ -146,31 +149,101 @@ class RideActionView: UIView{
         uberInfoLabel.anchor(top: infoView.bottomAnchor, paddingTop: 8)
         uberInfoLabel.centerX(inView: self)
         
-        
-        let seperatorView = UIView()
-        seperatorView.backgroundColor = .lightGray
-        addSubview(seperatorView)
-        
-        seperatorView.anchor(top: uberInfoLabel.bottomAnchor, left: leftAnchor, right: rightAnchor, paddingTop: 4, height: 0.75)
+        let separatorView = UIView()
+        separatorView.backgroundColor = .lightGray
+        addSubview(separatorView)
+        separatorView.anchor(top: uberInfoLabel.bottomAnchor, left: leftAnchor,
+                             right: rightAnchor, paddingTop: 4, height: 0.75)
         
         addSubview(actionButton)
-        actionButton.anchor(left: leftAnchor, bottom: safeAreaLayoutGuide.bottomAnchor, right: rightAnchor, paddingLeft: 12, paddingBottom: 12, paddingRight: 12, height: 50)
+        actionButton.anchor(left: leftAnchor, bottom: safeAreaLayoutGuide.bottomAnchor,
+                            right: rightAnchor, paddingLeft: 12, paddingBottom: 12,
+                            paddingRight: 12, height: 50)
     }
     
-    required init?(coder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Selectors
     
-    //MARK: - Functions
-    private func configureUI(withConfig config: RiderActionViewConfiguration){
-        
+    @objc func actionButtonPressed() {
+        switch buttonAction {
+        case .requestRide:
+            delegate?.uploadTrip(self)
+        case .cancel:
+            delegate?.cancelTrip()
+        case .getDirections:
+            print("DEBUG: Handle get directions..")
+        case .pickup:
+            delegate?.pickupPassenger()
+        case .dropOff:
+            delegate?.dropOffPassenger()
+        }
     }
     
+    // MARK: - Helper Functions
     
-    //MARK: - Selector
-    @objc func actionButtonPressed(){
-        
+    private func configureUI(withConfig config: RideActionViewConfiguration) {
+        switch config {
+        case .requestRide:
+            buttonAction = .requestRide
+            actionButton.setTitle(buttonAction.description, for: .normal)
+        case .tripAccepted:
+            guard let user = user else { return }
+            
+            if user.accountType == .passenger {
+                titleLabel.text = "En Route To Passenger"
+                buttonAction = .getDirections
+                actionButton.setTitle(buttonAction.description, for: .normal)
+            } else {
+                buttonAction = .cancel
+                actionButton.setTitle(buttonAction.description, for: .normal)
+                titleLabel.text = "Driver En Route"
+            }
+            
+            infoViewLabel.text = String(user.fullname.first ?? "X")
+            uberInfoLabel.text = user.fullname
+            
+        case .driverArrived:
+            guard let user = user else { return }
+            
+            if user.accountType == .driver {
+                titleLabel.text = "Driver Has Arrived"
+                addressLabel.text = "Please meet driver at pickup location"
+            }
+            
+        case .pickupPassenger:
+            titleLabel.text = "Arrived At Passenger Location"
+            buttonAction = .pickup
+            actionButton.setTitle(buttonAction.description, for: .normal)
+            
+        case .tripInProgress:
+            guard let user = user else { return }
+            
+            if user.accountType == .driver {
+                actionButton.setTitle("TRIP IN PROGRESS", for: .normal)
+                actionButton.isEnabled = false
+            } else {
+                buttonAction = .getDirections
+                actionButton.setTitle(buttonAction.description, for: .normal)
+            }
+            
+            titleLabel.text = "En Route To Destination"
+            addressLabel.text = ""
+            
+        case .endTrip:
+            guard let user = user else { return }
+            
+            if user.accountType == .driver {
+                actionButton.setTitle("ARRIVED AT DESTINATION", for: .normal)
+                actionButton.isEnabled = false
+            } else {
+                buttonAction = .dropOff
+                actionButton.setTitle(buttonAction.description, for: .normal)
+            }
+            
+            titleLabel.text = "Arrived at Destination"
+        }
     }
-    
 }

@@ -1,42 +1,22 @@
 //
-//  SettingsController.swift
+//  PickupController.swift
 //  swiftUberUdemig
 //
-//  Created by Mehmet Seyhan on 22.02.2025.
+//  Created by Mehmet Seyhan on 23.02.2025.
 //
 
 import UIKit
 
-private let reuseIdentifier = "LocationCell"
-
-protocol SettingsControllerDelegate: AnyObject {
-    func updateUser(_ controller: SettingsController)
+protocol PickupControllerDelegate: AnyObject{
+    func didAcceptTrip(_ trip: Trip)
 }
 
-enum LocationType: Int, CaseIterable, CustomStringConvertible {
-    case home
-    case work
-    
-    var description: String {
-        switch self {
-        case .home: return "Home"
-        case .work: return "Work"
-        }
-    }
-    
-    var subtitle: String {
-        switch self {
-        case .home: return "Add Home"
-        case .work: return "Add Work"
-        }
-    }
-}
+class PickupController: UITableViewController {
 
-class SettingsController: UITableViewController {
-
+    
     //MARK: -Properties
-    var user: User
-    weak var delegate: SettingsControllerDelegate?
+    let trip: Trip
+    weak var delegate: PickupControllerDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -47,8 +27,9 @@ class SettingsController: UITableViewController {
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
-    init(user: User) {
-        self.user = user
+    
+    init(trip: Trip) {
+        self.trip = trip
         super.init(nibName: nil, bundle: nil)
     }
     

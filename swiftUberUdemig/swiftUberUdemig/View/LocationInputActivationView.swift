@@ -14,8 +14,8 @@ protocol LocationInputActivationViewDelegate {
 
 class LocationInputActivationView: UIView {
     
+    // MARK: - Properties
     
-    //MARK: - Properties
     var delegate: LocationInputActivationViewDelegate?
     
     let indicatorView: UIView = {
@@ -24,24 +24,34 @@ class LocationInputActivationView: UIView {
         return view
     }()
     
-    let placeHolderLabel: UILabel = {
+    let placeholderLabel: UILabel = {
         let label = UILabel()
-        label.text = "Nereye?"
+        label.text = "Where to?"
         label.textColor = .darkGray
-        label.font = .systemFont(ofSize: 18)
+        label.font = UIFont.systemFont(ofSize: 18)
         return label
     }()
+    
+    // MARK: - Init
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         configureUI()
+        configureGestureRecognizer()
     }
     
-    required init(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    //MARK: - Functions
+    // MARK: - Selectors
+    
+    @objc func handleViewTapped() {
+        delegate?.presentLocationInputView()
+    }
+    
+    // MARK: - Helper Functions
+    
     func configureUI() {
         backgroundColor = .white
         addShadow()
@@ -50,20 +60,12 @@ class LocationInputActivationView: UIView {
         indicatorView.centerY(inView: self, leftAnchor: leftAnchor, paddingLeft: 16)
         indicatorView.setDimensions(height: 6, width: 6)
         
-        addSubview(placeHolderLabel)
-        placeHolderLabel.centerY(inView: self, leftAnchor: indicatorView.rightAnchor, paddingLeft: 20)
+        addSubview(placeholderLabel)
+        placeholderLabel.centerY(inView: self, leftAnchor: indicatorView.rightAnchor, paddingLeft: 20)
     }
     
-    func configureGectureRecognizer() {
+    func configureGestureRecognizer() {
         let tap = UITapGestureRecognizer(target: self, action: #selector(handleViewTapped))
         addGestureRecognizer(tap)
     }
-    
-    //MARK: - selectors
-    @objc func handleViewTapped(){
-        delegate?.presentLocationInputView()
-    }
-    
-    
 }
-

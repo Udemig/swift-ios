@@ -8,7 +8,7 @@
 import Foundation
 import CoreLocation
 
-enum AccountType: Int{
+enum AccountType: Int {
     case passenger
     case driver
 }
@@ -22,16 +22,14 @@ struct User {
     var homeLocation: String?
     var workLocation: String?
     
-    var firstInitial: String {
-        return String(fullname.prefix(1))
-    }
+    var firstInitial: String { return String(fullname.prefix(1)) }
     
-    init(uid: String, dictionary: [String: Any]){
+    init(uid: String, dictionary: [String: Any]) {
         self.uid = uid
-        self.fullname = dictionary["fullname"] as? String ?? "Anonymous"
+        self.fullname = dictionary["fullname"] as? String ?? ""
         self.email = dictionary["email"] as? String ?? ""
         
-        if let home = dictionary["homeLocation"] as? String{
+        if let home = dictionary["homeLocation"] as? String {
             self.homeLocation = home
         }
         
@@ -39,7 +37,7 @@ struct User {
             self.workLocation = work
         }
         
-        if let index = dictionary["accountType"] as? Int{
+        if let index = dictionary["accountType"] as? Int {
             self.accountType = AccountType(rawValue: index)
         }
     }

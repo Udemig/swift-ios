@@ -8,30 +8,29 @@
 import Foundation
 import UIKit
 
-
 protocol LocationInputViewDelegate {
     func dismissLocationInputView()
-    func executeSearch(with query: String)
+    func executeSearch(query: String)
 }
 
-class LocationInputView: UIView{
-    //MARK: - Properties
+class LocationInputView: UIView {
+    
+    // MARK: - Properties
+    
     var delegate: LocationInputViewDelegate?
     
     var user: User? {
-        didSet{
-            //ad atamasi yap
+        didSet {
+            titleLabel.text = user?.fullname
         }
     }
     
     let backButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setImage(UIImage(systemName: "chevron.left"), for: .normal)
+        button.setImage(UIImage(systemName: "chevron.backward"), for: .normal)
         button.addTarget(self, action: #selector(handleBackTapped), for: .touchUpInside)
         return button
-        
     }()
-    
     
     let titleLabel: UILabel = {
         let label = UILabel()
@@ -60,7 +59,7 @@ class LocationInputView: UIView{
     
     lazy var startingLocationTextField: UITextField = {
         let tf = UITextField()
-        tf.placeholder = "su anki yer"
+        tf.placeholder = "Current Location"
         tf.backgroundColor = .groupTableViewBackground
         tf.isEnabled = false
         tf.font = UIFont.systemFont(ofSize: 14)
@@ -72,6 +71,7 @@ class LocationInputView: UIView{
         
         return tf
     }()
+    
     
     lazy var destinationTextField: UITextField = {
         let tf = UITextField()
@@ -88,32 +88,40 @@ class LocationInputView: UIView{
         return tf
     }()
     
-    //MARK: - init
-    override init(frame: CGRect){
+    // MARK: - Init
+    
+    override init(frame: CGRect) {
         super.init(frame: frame)
         configureViewComponents()
     }
     
-    required init?(coder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Selectors
     
-    //MARK: -Functions
+    @objc func handleBackTapped() {
+        delegate?.dismissLocationInputView()
+    }
     
-    func configureViewComponents(){
+    // MARK: - Helper Functions
+    
+    func configureViewComponents() {
         backgroundColor = .white
         addShadow()
         
         addSubview(backButton)
-        backButton.anchor(top: topAnchor, left: leftAnchor, paddingTop: 44, paddingLeft: 12, width: 24, height: 24)
+        backButton.anchor(top: topAnchor, left: leftAnchor, paddingTop: 44,
+                          paddingLeft: 12, width: 24, height: 24)
         
         addSubview(titleLabel)
         titleLabel.centerY(inView: backButton)
         titleLabel.centerX(inView: self)
         
         addSubview(startingLocationTextField)
-        startingLocationTextField.anchor(top: backButton.bottomAnchor, left: leftAnchor, right: rightAnchor, paddingTop: 4, paddingLeft: 40, paddingRight: 40, height: 30)
+        startingLocationTextField.anchor(top: backButton.bottomAnchor, left: leftAnchor, right: rightAnchor,
+                                         paddingTop: 4, paddingLeft: 40, paddingRight: 40, height: 30)
         
         addSubview(startLocationIndicatorView)
         startLocationIndicatorView.centerY(inView: startingLocationTextField, leftAnchor: leftAnchor, paddingLeft: 20)
@@ -134,22 +142,13 @@ class LocationInputView: UIView{
                            bottom: destinationIndicatorView.topAnchor, paddingTop: 4,
                            paddingLeft: 0, paddingBottom: 4, width: 0.5)
         linkingView.centerX(inView: startLocationIndicatorView)
-        
     }
-    
-    
-    //MARK: - Selector
-    @objc func handleBackTapped(){
-        
-    }
-    
 }
-
 
 extension LocationInputView: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        guard let query = textField.text else {return false}
-        delegate?.executeSearch(with: query)
+        guard let query = textField.text else { return false }
+        delegate?.executeSearch(query: query)
         return true
     }
 }

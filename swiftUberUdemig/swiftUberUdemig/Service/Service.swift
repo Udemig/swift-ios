@@ -40,15 +40,15 @@ struct DriverService{
     static let shared = DriverService()
     
     func observerTrip(completion: @escaping(Trip)-> Void){
-        REF_TRIPS.observe(.childAdded) { dataShaphot in
-            guard let dictionary = dataShaphot.value as? [String: Any] else {
-                return
-            }
-            let uid = dataShaphot.key
-            let trip = Trip(passenderUid: uid, dictionary: dictionary)
-            completion(trip)
-        }
-    }
+          REF_TRIPS.observe(.childAdded) { dataSnapshot in
+              guard let dictionary = dataSnapshot.value as? [String: Any] else {
+                  return
+              }
+              let uid = dataSnapshot.key
+              let trip = Trip(passengerUid: uid, dictionary: dictionary)
+              completion(trip)
+          }
+      }
     
     func observeTripCancelled(trip: Trip, completion: @escaping() -> Void) {
         REF_TRIPS.child(trip.passengerUid).observeSingleEvent(of: .childRemoved) { dataSnaphot in
@@ -118,7 +118,7 @@ struct PassengerService {
                 return
             }
             let uid = dataSnapshot.key
-            let trip = Trip(passenderUid: uid, dictionary: dictionary)
+            let trip = Trip(passengerUid: uid, dictionary: dictionary)
             completion(trip)
         }
     }
