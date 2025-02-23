@@ -106,6 +106,10 @@ class ContainerController: UIViewController {
         addChild(menuController)
         menuController.didMove(toParent: self)
         view.insertSubview(menuController.view, at: 0)
+        
+        // ÇERÇEVEYİ DÜZELT (Eğer sorun buradaysa)
+        menuController.view.frame = CGRect(x: 0, y: 0, width: self.view.frame.width - 80, height: self.view.frame.height)
+        
         menuController.delegate = self
         configureBlackView()
     }

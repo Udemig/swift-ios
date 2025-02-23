@@ -58,9 +58,11 @@ class MenuController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        configureTableView()
+         configureTableView()
+         
     }
     
+  
     // MARK: - Selectors
     
     // MARK: - Helper Functions
@@ -88,8 +90,11 @@ extension MenuController {
         guard let option = MenuOptions(rawValue: indexPath.row) else { return UITableViewCell() }
         cell.textLabel?.text = option.description
         
+        print("DEBUG: Hücre oluşturuldu -> \(option.description)")
+        
         return cell
     }
+
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let option = MenuOptions(rawValue: indexPath.row) else { return }
