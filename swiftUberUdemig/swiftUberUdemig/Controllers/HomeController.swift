@@ -534,7 +534,6 @@ extension HomeController: CLLocationManagerDelegate {
 
 extension HomeController: PickupControllerDelegate{
     func didAcceptTrip(_ trip: Trip) {
-        
         self.trip = trip
         
         self.mapView.addAnnotationAndSelect(forCoordinate: trip.pickupCoordinates)
@@ -543,7 +542,6 @@ extension HomeController: PickupControllerDelegate{
         
         let placemark = MKPlacemark(coordinate: trip.pickupCoordinates)
         let mapItem = MKMapItem(placemark: placemark)
-        
         generatePolyline(toDestination: mapItem)
         
         mapView.zoomToFit(annotations: mapView.annotations)
@@ -551,11 +549,11 @@ extension HomeController: PickupControllerDelegate{
         observeCancelledTrip(trip: trip)
         
         self.dismiss(animated: true) {
-            Service.shared.fetchUserData(uid: trip.passengerUid) { passenger in
-                self.animateRideActionView(shouldShow: true, config: .tripAccepted, user: passenger)
-            }
+            Service.shared.fetchUserData(uid: trip.passengerUid, completion: { passenger in
+                self.animateRideActionView(shouldShow: true, config: .tripAccepted,
+                                           user: passenger)
+            })
         }
-    
     }
 }
 
@@ -606,6 +604,10 @@ extension HomeController: RideActionViewDelegate {
                 self.rideActionView.frame.origin.y = self.view.frame.height
             }
         }
+    }
+    
+    func getDirection() {
+        
     }
     
     func cancelTrip() {
