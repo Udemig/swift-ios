@@ -23,13 +23,15 @@ struct SwiftUI_Ders2: View {
     @State private var adi: String = "" //mehmet can seyhan
     @State var rengim: Color  = .yellow
     var body: some View {
-        VStack {
+        List {
+            
             TextField("Adiniz Gir", text: $adi)
             Text("Girilen ad \(adi)")
             ColorPicker("Renk Sec", selection: $rengim)
             Karem()
                 .fill(.green)
                 .frame(width: 100, height: 100)
+            
             Ellipse()
                 .frame(width: 50, height: 50)
                 .background(rengim)

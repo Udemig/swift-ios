@@ -13,5 +13,7 @@ struct SwiftUI_ders01App: App {
         WindowGroup {
             ContentView()
         }
+        
+       
     }
 }
