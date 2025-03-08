@@ -7,13 +7,14 @@
 
 import SwiftUI
 
+
 @main
 struct SwiftUI_ders01App: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDeelgate
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            Ders15()
         }
-        
-       
     }
 }

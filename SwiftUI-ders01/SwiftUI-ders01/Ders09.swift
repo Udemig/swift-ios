@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+
+
 struct Ders09: View {
     @State var tarih =  Date()
     let elements = ["Sohan", "Mohan", "Monika", "Sona", "Mona", "Seemran"]
