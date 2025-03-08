@@ -16,7 +16,7 @@ struct Ders15: View {
             }
             .padding()
             
-            Button("Bildirim gonder") {
+            Button("Bildirim gonder 1 2") {
                 bildirimGonder()
             }
             .padding()
