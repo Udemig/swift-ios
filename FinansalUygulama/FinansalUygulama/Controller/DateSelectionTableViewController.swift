@@ -9,6 +9,11 @@ import UIKit
 
 class DateSelectionTableViewController: UITableViewController {
 
+    var timeSeriesMonthlyAdjusted: TimeSeriesMonthlyAdjusted?
+    var selectedIndex: Int?
+    
+    var didSelectDate: ((Int) -> Void)?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
