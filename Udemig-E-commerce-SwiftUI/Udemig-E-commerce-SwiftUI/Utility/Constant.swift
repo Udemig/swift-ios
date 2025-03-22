@@ -18,7 +18,7 @@ let sampleProduct: Product = products[0]
 
 //Color
 
-let colorBackground: Color = Color("colorBackground")
+let colorBackground: Color = Color("ColorBackground")
 let colorGray: Color = Color(.systemGray4)
 
 //Layout
