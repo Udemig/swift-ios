@@ -1,0 +1,6 @@
+framework module Pods_udeApp {
+  umbrella header "Pods-udeApp-umbrella.h"
+
+  export *
+  module * { export * }
+}
